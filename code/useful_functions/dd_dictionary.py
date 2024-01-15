@@ -9,20 +9,32 @@ import pandas as pd
 # Output: dictionary of driving data files
 
 
-def create_dd_dictionary(driving_data_folder):
+def create_dd_dictionary(driving_data_folder, participants_to_exclude=[]):
     driving_data = {}
 
     for filename in os.listdir(driving_data_folder):
+        # exclude participants
+        if filename.replace(".txt", "") in participants_to_exclude:
+            continue
+
+        # file path
         file_path = os.path.join(driving_data_folder, filename)
-        driving_data[filename.replace(".txt", "")] = pd.read_csv(
+
+        # read file
+        driver_data = pd.read_csv(
             file_path,
-            usecols={
-                "Time",
-                "VehicleSpeed",
-                "SteeringWheelAngle",
-                "Autonomous Mode (T/F)",
-                "Obstacles",
-            },
             dtype={"Obstacles": str},
         )
+
+        # fill NaN values with "Nothing"
+        driver_data = driver_data.fillna("Nothing")
+
+        # Remove columns "AcceleratorPedalPos" and "DeceleratorPedalPos"
+        driver_data = driver_data.drop(
+            columns=["AcceleratorPedalPos", "DeceleratorPedalPos"]
+        )
+
+        # add to dictionary
+        driving_data[filename.replace(".txt", "")] = driver_data
+
     return driving_data
