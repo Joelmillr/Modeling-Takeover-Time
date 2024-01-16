@@ -84,4 +84,6 @@ def create_takeover_timestamps(driving_data_dictionary, enc):
     takeover_timestamps = takeover_timestamps.sort_values("sort_key")
     takeover_timestamps = takeover_timestamps.drop("sort_key", axis=1)
 
+    takeover_timestamps.reset_index(inplace=True)
+
     return takeover_timestamps

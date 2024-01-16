@@ -28,9 +28,13 @@ def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
             )
 
         else:
-            driver_data = pd.read_csv(file_path, sep="\t", header=9)
-            driver_data = driver_data.iloc[1:]
-            driver_data = driver_data.iloc[:, :-1]
+            driver_data = pd.read_csv(
+                file_path,
+                sep="\t",
+                header=9,
+                skiprows=[10],
+                usecols=[0, 1, 2, 3],
+            )
 
             # Convert time to timedelta
             driver_data["min"] = pd.to_timedelta(driver_data["min"], unit="m")

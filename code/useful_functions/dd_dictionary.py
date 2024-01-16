@@ -29,9 +29,15 @@ def create_dd_dictionary(driving_data_folder, participants_to_exclude=[]):
         # fill NaN values with "Nothing"
         driver_data = driver_data.fillna("Nothing")
 
-        # Remove columns "AcceleratorPedalPos" and "DeceleratorPedalPos"
+        # Remove uneeded columns
         driver_data = driver_data.drop(
-            columns=["AcceleratorPedalPos", "DeceleratorPedalPos"]
+            columns=[
+                "AcceleratorPedalPos",
+                "DeceleratorPedalPos",
+                "EngineSpeed",
+                "GearPosActual",
+                "GearPosTarget",
+            ]
         )
 
         # add to dictionary
