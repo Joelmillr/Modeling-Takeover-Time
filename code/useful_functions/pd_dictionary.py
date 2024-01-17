@@ -13,8 +13,6 @@ def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
     phsyiological_data = {}
 
     for filename in os.listdir(physio_data_folder):
-        file_path = os.path.join(physio_data_folder, filename)
-
         # exclude participants
         if (
             filename.replace(".txt", "") in participants_to_exclude
@@ -22,6 +20,9 @@ def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
         ):
             continue
 
+        file_path = os.path.join(physio_data_folder, filename)
+
+        # read file
         if "-markers" in filename:
             phsyiological_data[filename.replace(".txt", "")] = pd.read_csv(
                 file_path, header=2, sep="\t"

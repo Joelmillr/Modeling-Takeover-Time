@@ -17,10 +17,9 @@ def create_dd_dictionary(driving_data_folder, participants_to_exclude=[]):
         if filename.replace(".txt", "") in participants_to_exclude:
             continue
 
-        # file path
-        file_path = os.path.join(driving_data_folder, filename)
-
         # read file
+        file_path = os.path.join(driving_data_folder, filename)
+        
         driver_data = pd.read_csv(
             file_path,
             dtype={"Obstacles": str},
