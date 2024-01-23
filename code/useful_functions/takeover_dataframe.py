@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 # Create a dictionary of dataframes for each driver
 # Note: **Consider Checking if the obstacle was detected**
 def create_obstacle_trigger_times(driver_data, enc):
@@ -85,5 +84,8 @@ def create_takeover_timestamps(driving_data_dictionary, enc):
     takeover_timestamps = takeover_timestamps.drop("sort_key", axis=1)
 
     takeover_timestamps.reset_index(inplace=True)
+
+    # change the name of index column to subject_id
+    takeover_timestamps.rename(columns={"index": "subject_id"}, inplace=True)
 
     return takeover_timestamps

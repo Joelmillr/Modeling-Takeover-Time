@@ -1,15 +1,19 @@
 import os
 import pandas as pd
 
-# Creates a dictionary of physiological data files, including markers
-## dictionary key: physiological data file name
-## dictionary value: physiological data or markers file
-
-# Input: folder containing physiological data files
-# Output: dictionary of physiological data files
-
-
 def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
+    """
+    Creates a dictionary of physiological data files, including markers.
+
+    Args:
+        physio_data_folder (str): The folder containing physiological data files.
+        participants_to_exclude (list, optional): List of participants to exclude. Defaults to [].
+
+    Returns:
+        dict: Dictionary of physiological data files.
+            Dictionary key: physiological data file name.
+            Dictionary value: physiological data or markers file.
+    """
     phsyiological_data = {}
 
     for filename in os.listdir(physio_data_folder):
