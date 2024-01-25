@@ -1,8 +1,17 @@
 import pandas as pd
 
-# Create a dictionary of dataframes for each driver
-# Note: **Consider Checking if the obstacle was detected**
 def create_obstacle_trigger_times(driver_data, enc):
+    """
+    Create a dictionary of obstacle trigger times for each driver.
+
+    Parameters:
+    driver_data (pandas.DataFrame): DataFrame containing driver data.
+    enc (object): Encoder object for encoding obstacle classes.
+
+    Returns:
+    dict: Dictionary containing obstacle trigger times for each obstacle.
+    """
+
     obstacle_trigger_times = {}
 
     # remove Detected and Nothing
@@ -39,7 +48,6 @@ def create_obstacle_trigger_times(driver_data, enc):
                 ]["Time"].values[0]
 
                 if takeover > next_obstacle_trigger:
-                    # print("Takeover after the next obstacle was triggered")
                     continue
 
             # Time when manual control was released
@@ -63,9 +71,18 @@ def create_obstacle_trigger_times(driver_data, enc):
     return obstacle_trigger_times
 
 
-# Create a dataframes of takeover times for each driver
-# The index is the driver ID
 def create_takeover_timestamps(driving_data_dictionary, enc):
+    """
+    Create a DataFrame of takeover times for each driver.
+
+    Parameters:
+    driving_data_dictionary (dict): Dictionary containing driver data for each driver.
+    enc (object): Encoder object for encoding obstacle classes.
+
+    Returns:
+    pandas.DataFrame: DataFrame containing takeover times for each driver.
+    """
+
     takeover_timestamps = pd.DataFrame()
 
     for key in driving_data_dictionary.keys():
@@ -76,7 +93,7 @@ def create_takeover_timestamps(driving_data_dictionary, enc):
             [takeover_timestamps, pd.DataFrame(timestamps, index=[key])]
         )
 
-    # Sort the columns by Particpant ID
+    # Sort the columns by Participant ID
     takeover_timestamps["sort_key"] = takeover_timestamps.index.to_series().apply(
         lambda x: int(x.split("ST")[-1]) if "ST" in x else int(x.split("NST")[-1])
     )
