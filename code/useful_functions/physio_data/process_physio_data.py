@@ -12,12 +12,15 @@ def process_physio_data(phsyiological_data_dictionary):
     Returns:
         dict: A dictionary containing processed physiological data, segmented into baseline, training, and driving periods.
     """
+    # storing the marker keys to be removed
     marker_keys = []
 
+    # loop through each driver
     for driver in phsyiological_data_dictionary.keys():
         if driver.endswith("-markers"):
             continue
 
+        # get driver data
         driver_data = phsyiological_data_dictionary[driver]
         markers = phsyiological_data_dictionary[driver + "-markers"]
 
@@ -25,7 +28,6 @@ def process_physio_data(phsyiological_data_dictionary):
         driver_data["min"] = pd.to_timedelta(driver_data["min"], unit="min")
 
         # resampling
-        # driver_data = driver_data.drop_duplicates(subset="min")
         driver_data = driver_data.set_index("min")
         driver_data = driver_data.resample("10ms").ffill()
         driver_data = driver_data.reset_index()
@@ -33,26 +35,23 @@ def process_physio_data(phsyiological_data_dictionary):
         # Change min to Time
         driver_data = driver_data.rename(columns={"min": "Time"})
 
-        # Baseline
+        # Baseline Data
         baseline_start = pd.to_timedelta(markers["Time(sec.):"][0], unit="s")
         baseline_end = pd.to_timedelta(markers["Time(sec.):"][1], unit="s")
-
         driver_baseline_data = driver_data[
             (driver_data["Time"] >= baseline_start) & (driver_data["Time"] <= baseline_end)
         ].copy()
 
-        # Training
+        # Training Data
         training_start = pd.to_timedelta(markers["Time(sec.):"][2], unit="s")
         training_end = pd.to_timedelta(markers["Time(sec.):"][3], unit="s")
-
         driver_training_data = driver_data[
             (driver_data["Time"] >= training_start) & (driver_data["Time"] <= training_end)
         ].copy()
 
-        # Driving
+        # Driving Data
         driving_start = pd.to_timedelta(markers["Time(sec.):"][4], unit="s")
         driving_end = pd.to_timedelta(markers["Time(sec.):"][5], unit="s")
-
         driver_driving_data = driver_data[
             (driver_data["Time"] >= driving_start) & (driver_data["Time"] <= driving_end)
         ].copy()
@@ -86,7 +85,7 @@ def process_physio_data(phsyiological_data_dictionary):
         #         driver_driving_data.at[first_index, "Obstacles"] = obstacle
         # ----------------------------------
 
-        # replacing the dictionary value
+        # replacing the dictionary value with segmented data
         phsyiological_data_dictionary[driver] = {
             "baseline": driver_baseline_data,
             "training": driver_training_data,

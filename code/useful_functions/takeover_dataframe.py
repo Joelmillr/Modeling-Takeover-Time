@@ -11,12 +11,13 @@ def create_obstacle_trigger_times(driver_data, enc):
     Returns:
     dict: Dictionary containing obstacle trigger times for each obstacle.
     """
-
+    # dictionary to store obstacle trigger times
     obstacle_trigger_times = {}
 
     # remove Detected and Nothing
     obstacles = enc.classes_[(enc.classes_ != "Detected") & (enc.classes_ != "Nothing")]
 
+    # loop through each obstacle
     for obstacle in obstacles:
         try:
             # Find what time the obstacle was triggered
@@ -82,13 +83,15 @@ def create_takeover_timestamps(driving_data_dictionary, enc):
     Returns:
     pandas.DataFrame: DataFrame containing takeover times for each driver.
     """
-
+    # dataframe to store takeover times
     takeover_timestamps = pd.DataFrame()
 
+    # loop through each driver
     for key in driving_data_dictionary.keys():
         driving_data = driving_data_dictionary[key]
         timestamps = create_obstacle_trigger_times(driving_data, enc)
 
+        # convert to dataframe
         takeover_timestamps = pd.concat(
             [takeover_timestamps, pd.DataFrame(timestamps, index=[key])]
         )
@@ -99,7 +102,6 @@ def create_takeover_timestamps(driving_data_dictionary, enc):
     )
     takeover_timestamps = takeover_timestamps.sort_values("sort_key")
     takeover_timestamps = takeover_timestamps.drop("sort_key", axis=1)
-
     takeover_timestamps.reset_index(inplace=True)
 
     # change the name of index column to subject_id

@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 
+
 def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
     """
     Creates a dictionary of physiological data files, including markers.
@@ -14,8 +15,10 @@ def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
             Dictionary key: physiological data file name.
             Dictionary value: physiological data or markers file.
     """
+    # create dictionary
     phsyiological_data = {}
 
+    # loop through files
     for filename in os.listdir(physio_data_folder):
         # exclude participants
         if (
@@ -24,14 +27,15 @@ def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
         ):
             continue
 
+        # read file
         file_path = os.path.join(physio_data_folder, filename)
 
-        # read file
+        # markers
         if "-markers" in filename:
             phsyiological_data[filename.replace(".txt", "")] = pd.read_csv(
                 file_path, header=2, sep="\t"
             )
-
+        # physiological data
         else:
             driver_data = pd.read_csv(
                 file_path,
@@ -48,6 +52,7 @@ def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
             driver_data = driver_data.interpolate(method="linear")
             driver_data = driver_data.reset_index()
 
+            # add to dictionary
             phsyiological_data[filename.replace(".txt", "")] = driver_data
 
     return phsyiological_data

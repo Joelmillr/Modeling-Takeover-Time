@@ -51,11 +51,13 @@ def process_physio_timestamps(physio_timestamps, participants_to_exclude):
     respond = "TakeoverObs"
     obstacles = ["Deer", "Cone", "Frog", "Can", "FA1", "FA2"]
 
+    # Add TOT
     for obstacle in obstacles:
         physio_timestamps["TOT" + "Obs" + obstacle] = (
             physio_timestamps[respond + obstacle] - physio_timestamps[trigger + obstacle]
         )
 
+    # rename columns to match the driving data
     for col in physio_timestamps.columns:
         for i, obstacle in enumerate(obstacles):
             if obstacle in col:
