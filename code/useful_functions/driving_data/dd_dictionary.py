@@ -12,12 +12,15 @@ def create_dd_dictionary(driving_data_folder, participants_to_exclude=[]):
     Returns:
         dict: Dictionary of driving data files.
     """
+    # Create dictionary
     driving_data = {}
 
+    # Loop through files
     for filename in os.listdir(driving_data_folder):
         if filename.replace(".txt", "") in participants_to_exclude:
             continue
-
+        
+        # Read and Store file
         file_path = os.path.join(driving_data_folder, filename)
         
         driver_data = pd.read_csv(

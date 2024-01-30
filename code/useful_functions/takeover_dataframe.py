@@ -14,7 +14,7 @@ def create_obstacle_trigger_times(driver_data, enc):
     # dictionary to store obstacle trigger times
     obstacle_trigger_times = {}
 
-    # remove Detected and Nothing
+    # remove Detected and Nothing obstacles
     obstacles = enc.classes_[(enc.classes_ != "Detected") & (enc.classes_ != "Nothing")]
 
     # loop through each obstacle
@@ -62,6 +62,7 @@ def create_obstacle_trigger_times(driver_data, enc):
         except KeyError:
             continue
 
+        # Add the obstacle trigger times to the dictionary
         obstacle_trigger_times[obstacle] = trigger
         obstacle_trigger_times[obstacle.replace("Triggered", "Takeover")] = takeover
         obstacle_trigger_times[obstacle.replace("Triggered", "Release")] = release

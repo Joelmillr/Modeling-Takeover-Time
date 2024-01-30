@@ -24,12 +24,14 @@ def check_for_missing_data(driving_data_folder, physio_data_folder):
         if file.endswith(".txt") and not file.endswith("-markers.txt")
     ]
 
+    # Initialize list to store missing files
     missing_files = []
-    # Print any file that is in the Physio folder but not in the Driving folder or vice versa
+
+    # Check for missing files
     for file in physio_files:
         if file not in driving_files:
             missing_files.append(file.replace(".txt", ""))
-
+            
     for file in driving_files:
         if file not in physio_files:
             missing_files.append(file.replace(".txt", ""))

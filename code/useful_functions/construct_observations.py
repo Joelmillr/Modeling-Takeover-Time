@@ -1,4 +1,5 @@
 import pandas as pd
+import neurokit2 as nk
 
 
 def construct_observations(
@@ -30,13 +31,20 @@ def construct_observations(
     for driver in driving_data_dictionary.keys():
         # data for each driver
         driver_driving_data = driving_data_dictionary[driver]
+        driver_phyio_baseline_data = phsyiological_data_dictionary[driver]["baseline"]
         driver_physio_data = phsyiological_data_dictionary[driver]["driving"]
 
         # timestamps
         driver_driving_timestamps = driving_timestamps[driving_timestamps["subject_id"] == driver]
         driver_physio_timestamps = physio_timestamps[physio_timestamps["subject_id"] == driver]
 
-        # loop through every TOT
+        # get the baseline hrv
+        baseline_hrv = nk.hrv_time(driver_phyio_baseline_data, sampling_rate=100)
+        baseline_hrv = baseline_hrv.drop(
+            columns=["HRV_SDANN1", "HRV_SDNNI1", "HRV_SDANN2", "HRV_SDNNI2", "HRV_SDANN5", "HRV_SDNNI5"]
+        )
+
+        # loop through every takeover
         for column in driver_driving_timestamps.columns:
             if "TOT" in column:
                 # get the obstacle number
@@ -57,7 +65,7 @@ def construct_observations(
                         >= driving_obstacle_trigger - pd.to_timedelta("10s")
                     )
                     & (driver_driving_data["Time"] < driving_obstacle_trigger)
-                ]
+                ].copy()
 
                 physio_data_10_sec = driver_physio_data[
                     (
@@ -72,7 +80,19 @@ def construct_observations(
                         driver_physio_data["Time"]
                         < driver_physio_data.Time.min() + physio_obstacle_trigger
                     )
-                ]
+                ].copy()
+
+                # get the hrv for the 10s before the takeover
+                takeover_hrv = nk.hrv_time(physio_data_10_sec, sampling_rate=100)
+                takeover_hrv = takeover_hrv.drop(
+                    columns=["HRV_SDANN1", "HRV_SDNNI1", "HRV_SDANN2", "HRV_SDNNI2", "HRV_SDANN5", "HRV_SDNNI5"]
+                )
+
+                # Store the Difference between the baseline and the takeover
+                hrv_difference = takeover_hrv - baseline_hrv
+
+                # concatenate the dataframes
+                hrv = pd.concat([baseline_hrv, takeover_hrv, hrv_difference], axis=1)
 
                 # reset the Time index
                 driving_data_10_sec = driving_data_10_sec.set_index("Time")
@@ -113,8 +133,12 @@ def construct_observations(
                 # Broadcast to repeat the static data for each row of the dynamic data
                 demo_data = pd.concat([demo_data] * len(driver_data), ignore_index=True)
 
+                # Broadcast the hrv data
+                hrv = pd.concat([hrv] * len(driver_data), ignore_index=True)
+
                 # merge the data
                 driver_data = pd.merge(driver_data, demo_data, left_index=True, right_index=True)
+                driver_data = pd.merge(driver_data, hrv, left_index=True, right_index=True)
 
                 # change the code value to the driver id
                 driver_data["code"] = driver_data["code"].apply(lambda x: x.split("T")[1])
@@ -122,7 +146,7 @@ def construct_observations(
                 driver_data["code"] = driver_data["code"].astype(int)
 
                 if len(driver_data) != 1000:
-                    print(driver)
+                    continue
 
                 # determine if the takeover was slow or fast
                 if driver_driving_timestamps[column].iloc[0] > pd.to_timedelta("3s"):

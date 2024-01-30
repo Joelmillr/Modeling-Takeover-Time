@@ -45,13 +45,6 @@ def create_pd_dictionary(physio_data_folder, participants_to_exclude=[]):
                 usecols=[0, 1, 2, 3],
             )
 
-            # Convert time to timedelta
-            driver_data["min"] = pd.to_timedelta(driver_data["min"], unit="m")
-            driver_data.set_index("min", inplace=True)
-            driver_data = driver_data.resample("10ms").mean()
-            driver_data = driver_data.interpolate(method="linear")
-            driver_data = driver_data.reset_index()
-
             # add to dictionary
             phsyiological_data[filename.replace(".txt", "")] = driver_data
 
