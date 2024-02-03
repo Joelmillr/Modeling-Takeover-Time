@@ -42,6 +42,9 @@ def process_physio_data(phsyiological_data_dictionary):
             sampling_rate=100,
         )
 
+        # Replace nan values with 0
+        signals = signals.fillna(0)
+
         # Add the processed data to the driver data
         driver_data = pd.concat([driver_data, signals], axis=1)
 
