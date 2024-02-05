@@ -41,7 +41,66 @@ def construct_observations(
         # get the baseline hrv
         baseline_hrv = nk.hrv_time(driver_phyio_baseline_data, sampling_rate=100)
         baseline_hrv = baseline_hrv.drop(
-            columns=["HRV_SDANN1", "HRV_SDNNI1", "HRV_SDANN2", "HRV_SDNNI2", "HRV_SDANN5", "HRV_SDNNI5"]
+            columns=[
+                "HRV_SDANN1",
+                "HRV_SDNNI1",
+                "HRV_SDANN2",
+                "HRV_SDNNI1",
+                "HRV_SDNNI2",
+                "HRV_SDANN5",
+                "HRV_SDNNI5",
+                "HRV_MedianNN",
+                "HRV_MadNN",
+                "HRV_MCVNN",
+                "HRV_IQRNN",
+                "HRV_SDRMSSD",
+                "HRV_Prc20NN",
+                "HRV_Prc80NN",
+                "HRV_pNN50",
+                "HRV_pNN20",
+                "HRV_MinNN",
+                "HRV_MaxNN",
+                "HRV_HTI",
+                "HRV_TINN",
+                "HRV_MeanNN",
+                "HRV_SDNN",
+                "HRV_RMSSD",
+                "HRV_SDSD",
+                "HRV_CVNN",
+                "HRV_CVSD",
+                "HRV_MedianNN",
+                "HRV_MadNN",
+                "HRV_MCVNN",
+                "HRV_IQRNN",
+                "HRV_SDRMSSD",
+                "HRV_Prc20NN",
+                "HRV_Prc80NN",
+                "HRV_pNN50",
+                "HRV_pNN20",
+                "HRV_MinNN",
+                "HRV_MaxNN",
+                "HRV_HTI",
+                "HRV_TINN",
+                "HRV_MeanNN",
+                "HRV_SDNN",
+                "HRV_RMSSD",
+                "HRV_SDSD",
+                "HRV_CVNN",
+                "HRV_CVSD",
+                "HRV_MedianNN",
+                "HRV_MadNN",
+                "HRV_MCVNN",
+                "HRV_IQRNN",
+                "HRV_SDRMSSD",
+                "HRV_Prc20NN",
+                "HRV_Prc80NN",
+                "HRV_pNN50",
+                "HRV_pNN20",
+                "HRV_MinNN",
+                "HRV_MaxNN",
+                "HRV_HTI",
+                "HRV_TINN",
+            ]
         )
 
         # loop through every takeover
@@ -85,11 +144,75 @@ def construct_observations(
                 # get the hrv for the 10s before the takeover
                 takeover_hrv = nk.hrv_time(physio_data_10_sec, sampling_rate=100)
                 takeover_hrv = takeover_hrv.drop(
-                    columns=["HRV_SDANN1", "HRV_SDNNI1", "HRV_SDANN2", "HRV_SDNNI2", "HRV_SDANN5", "HRV_SDNNI5"]
+                    columns=[
+                        "HRV_SDANN1",
+                        "HRV_SDNNI1",
+                        "HRV_SDANN2",
+                        "HRV_SDNNI1",
+                        "HRV_SDNNI2",
+                        "HRV_SDANN5",
+                        "HRV_SDNNI5",
+                        "HRV_MedianNN",
+                        "HRV_MadNN",
+                        "HRV_MCVNN",
+                        "HRV_IQRNN",
+                        "HRV_SDRMSSD",
+                        "HRV_Prc20NN",
+                        "HRV_Prc80NN",
+                        "HRV_pNN50",
+                        "HRV_pNN20",
+                        "HRV_MinNN",
+                        "HRV_MaxNN",
+                        "HRV_HTI",
+                        "HRV_TINN",
+                        "HRV_MeanNN",
+                        "HRV_SDNN",
+                        "HRV_RMSSD",
+                        "HRV_SDSD",
+                        "HRV_CVNN",
+                        "HRV_CVSD",
+                        "HRV_MedianNN",
+                        "HRV_MadNN",
+                        "HRV_MCVNN",
+                        "HRV_IQRNN",
+                        "HRV_SDRMSSD",
+                        "HRV_Prc20NN",
+                        "HRV_Prc80NN",
+                        "HRV_pNN50",
+                        "HRV_pNN20",
+                        "HRV_MinNN",
+                        "HRV_MaxNN",
+                        "HRV_HTI",
+                        "HRV_TINN",
+                        "HRV_MeanNN",
+                        "HRV_SDNN",
+                        "HRV_RMSSD",
+                        "HRV_SDSD",
+                        "HRV_CVNN",
+                        "HRV_CVSD",
+                        "HRV_MedianNN",
+                        "HRV_MadNN",
+                        "HRV_MCVNN",
+                        "HRV_IQRNN",
+                        "HRV_SDRMSSD",
+                        "HRV_Prc20NN",
+                        "HRV_Prc80NN",
+                        "HRV_pNN50",
+                        "HRV_pNN20",
+                        "HRV_MinNN",
+                        "HRV_MaxNN",
+                        "HRV_HTI",
+                        "HRV_TINN",
+                    ]
                 )
 
                 # Store the Difference between the baseline and the takeover
                 hrv_difference = takeover_hrv - baseline_hrv
+
+                # rename the columns
+                hrv_difference.columns = [
+                    "HRV_" + column + "_Difference" for column in hrv_difference.columns
+                ]
 
                 # concatenate the dataframes
                 hrv = pd.concat([baseline_hrv, takeover_hrv, hrv_difference], axis=1)
@@ -154,4 +277,4 @@ def construct_observations(
                 else:
                     fast_observations.append(driver_data.to_numpy())
 
-    return slow_observations, fast_observations
+    return slow_observations, fast_observations, driver_data.columns

@@ -45,6 +45,41 @@ def process_physio_data(phsyiological_data_dictionary):
         # Replace nan values with 0
         signals = signals.fillna(0)
 
+        # Drop the columns that are not needed
+        signals = signals.drop(
+            columns=[
+                "ECG_P_Peaks",
+                "ECG_P_Onsets",
+                "ECG_P_Offsets",
+                "ECG_Q_Peaks",
+                "ECG_R_Onsets",
+                "ECG_R_Offsets",
+                "ECG_S_Peaks",
+                "ECG_T_Peaks",
+                "ECG_T_Onsets",
+                "ECG_T_Offsets",
+                "ECG_Phase_Atrial",
+                "ECG_Phase_Completion_Atrial",
+                "ECG_Phase_Ventricular",
+                "ECG_Phase_Completion_Ventricular",
+                "RSP_RVT",
+                "RSP_Phase",
+                "RSP_Phase_Completion",
+                "RSP_Symmetry_PeakTrough",
+                "RSP_Symmetry_RiseDecay",
+                "RSP_Peaks",
+                "RSP_Troughs",
+                "SCR_Onsets",
+                "SCR_Peaks",
+                "SCR_Height",
+                "SCR_Amplitude",
+                "SCR_RiseTime",
+                "SCR_Recovery",
+                "RSA_P2T",
+                "RSA_Gates",
+            ]
+        )
+
         # Add the processed data to the driver data
         driver_data = pd.concat([driver_data, signals], axis=1)
 
