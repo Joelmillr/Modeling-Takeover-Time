@@ -1,7 +1,6 @@
 import pandas as pd
 import neurokit2 as nk
 
-
 def construct_observations(
     driving_data_dictionary,
     phsyiological_data_dictionary,
@@ -37,71 +36,6 @@ def construct_observations(
         # timestamps
         driver_driving_timestamps = driving_timestamps[driving_timestamps["subject_id"] == driver]
         driver_physio_timestamps = physio_timestamps[physio_timestamps["subject_id"] == driver]
-
-        # get the baseline hrv
-        baseline_hrv = nk.hrv_time(driver_phyio_baseline_data, sampling_rate=100)
-        baseline_hrv = baseline_hrv.drop(
-            columns=[
-                "HRV_SDANN1",
-                "HRV_SDNNI1",
-                "HRV_SDANN2",
-                "HRV_SDNNI1",
-                "HRV_SDNNI2",
-                "HRV_SDANN5",
-                "HRV_SDNNI5",
-                "HRV_MedianNN",
-                "HRV_MadNN",
-                "HRV_MCVNN",
-                "HRV_IQRNN",
-                "HRV_SDRMSSD",
-                "HRV_Prc20NN",
-                "HRV_Prc80NN",
-                "HRV_pNN50",
-                "HRV_pNN20",
-                "HRV_MinNN",
-                "HRV_MaxNN",
-                "HRV_HTI",
-                "HRV_TINN",
-                "HRV_MeanNN",
-                "HRV_SDNN",
-                "HRV_RMSSD",
-                "HRV_SDSD",
-                "HRV_CVNN",
-                "HRV_CVSD",
-                "HRV_MedianNN",
-                "HRV_MadNN",
-                "HRV_MCVNN",
-                "HRV_IQRNN",
-                "HRV_SDRMSSD",
-                "HRV_Prc20NN",
-                "HRV_Prc80NN",
-                "HRV_pNN50",
-                "HRV_pNN20",
-                "HRV_MinNN",
-                "HRV_MaxNN",
-                "HRV_HTI",
-                "HRV_TINN",
-                "HRV_MeanNN",
-                "HRV_SDNN",
-                "HRV_RMSSD",
-                "HRV_SDSD",
-                "HRV_CVNN",
-                "HRV_CVSD",
-                "HRV_MedianNN",
-                "HRV_MadNN",
-                "HRV_MCVNN",
-                "HRV_IQRNN",
-                "HRV_SDRMSSD",
-                "HRV_Prc20NN",
-                "HRV_Prc80NN",
-                "HRV_pNN50",
-                "HRV_pNN20",
-                "HRV_MinNN",
-                "HRV_MaxNN",
-                "HRV_HTI",
-                "HRV_TINN",
-            ]
-        )
 
         # loop through every takeover
         for column in driver_driving_timestamps.columns:
@@ -141,6 +75,7 @@ def construct_observations(
                     )
                 ].copy()
 
+                '''
                 # get the hrv for the 10s before the takeover
                 takeover_hrv = nk.hrv_time(physio_data_10_sec, sampling_rate=100)
                 takeover_hrv = takeover_hrv.drop(
@@ -205,17 +140,18 @@ def construct_observations(
                         "HRV_TINN",
                     ]
                 )
+                '''
 
-                # Store the Difference between the baseline and the takeover
-                hrv_difference = takeover_hrv - baseline_hrv
+                # # Store the Difference between the baseline and the takeover
+                # hrv_difference = takeover_hrv - baseline_hrv
 
-                # rename the columns
-                hrv_difference.columns = [
-                    "HRV_" + column + "_Difference" for column in hrv_difference.columns
-                ]
+                # # rename the columns
+                # hrv_difference.columns = [
+                #     "HRV_" + column + "_Difference" for column in hrv_difference.columns
+                # ]
 
-                # concatenate the dataframes
-                hrv = pd.concat([baseline_hrv, takeover_hrv, hrv_difference], axis=1)
+                # # concatenate the dataframes
+                # hrv = pd.concat([baseline_hrv, takeover_hrv, hrv_difference], axis=1)
 
                 # reset the Time index
                 driving_data_10_sec = driving_data_10_sec.set_index("Time")
@@ -242,9 +178,6 @@ def construct_observations(
                 driver_data = driver_data.drop(
                     columns=[
                         "Time",
-                        " Position X",
-                        "Position Y",
-                        "Position Z",
                         "Autonomous Mode (T/F)",
                         "Obstacles",
                     ]
@@ -257,11 +190,11 @@ def construct_observations(
                 demo_data = pd.concat([demo_data] * len(driver_data), ignore_index=True)
 
                 # Broadcast the hrv data
-                hrv = pd.concat([hrv] * len(driver_data), ignore_index=True)
+                # hrv = pd.concat([hrv] * len(driver_data), ignore_index=True)
 
                 # merge the data
                 driver_data = pd.merge(driver_data, demo_data, left_index=True, right_index=True)
-                driver_data = pd.merge(driver_data, hrv, left_index=True, right_index=True)
+                # driver_data = pd.merge(driver_data, hrv, left_index=True, right_index=True)
 
                 # change the code value to the driver id
                 driver_data["code"] = driver_data["code"].apply(lambda x: x.split("T")[1])

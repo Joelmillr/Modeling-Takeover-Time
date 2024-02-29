@@ -29,8 +29,8 @@ def process_driver_demographic_data(driver_demographic_data, participants_to_exc
     # Normalize the age and km_year?
 
     # Add a condition column if code contains NST
-    driver_demographic_data["condition"] = driver_demographic_data["code"].apply(
-        lambda x: "NST" in x
+    driver_demographic_data["NDRT"] = driver_demographic_data["code"].apply(
+        lambda x: "NST" not in x
     )
 
     return driver_demographic_data
