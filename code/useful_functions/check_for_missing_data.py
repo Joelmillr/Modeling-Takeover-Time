@@ -1,6 +1,5 @@
 import os
 
-
 def check_for_missing_data(driving_data_folder, physio_data_folder):
     """
     Check for missing data files between the Driving folder and Physio folder.
@@ -17,7 +16,7 @@ def check_for_missing_data(driving_data_folder, physio_data_folder):
         file for file in os.listdir(driving_data_folder) if file.endswith(".txt")
     ]
 
-    # Read ever file in the Physio folder that is not a -markers file
+    # Read every file in the Physio folder that is not a -markers file
     physio_files = [
         file
         for file in os.listdir(physio_data_folder)
